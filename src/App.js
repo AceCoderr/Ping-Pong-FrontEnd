@@ -1,24 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import RoomListingPage from './Components/Dashboard';
+import ChatPage from './Components/Chat';
+import './Styles/App.css';
 
 function App() {
+  const [currentRoom, setCurrentRoom] = useState(null);
+  const [username, setUsername] = useState('');
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route 
+            path="/" 
+            element={<RoomListingPage setCurrentRoom={setCurrentRoom} setUsername={setUsername} />} 
+          />
+          <Route 
+            path="/chat/:roomId" 
+            element={
+              currentRoom ? (
+                <ChatPage roomData={currentRoom} username={username} setUsername={setUsername} />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            } 
+          />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
