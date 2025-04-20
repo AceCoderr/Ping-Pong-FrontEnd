@@ -28,6 +28,7 @@ function Chat({ roomData, username, setUsername }) {
     };
   }, [roomId, username]);
 
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     scrollToBottom();
@@ -39,21 +40,24 @@ function Chat({ roomData, username, setUsername }) {
 
   const connectToRoom = () => {
     try {
-      const wsUrl = `ws://localhost:8080/ws/chat/roomId=${roomId}`;
+      const encodedUsername = encodeURIComponent(username);
+
+      const wsUrl = `ws://localhost:8080/ws/chat/roomId=${roomId}?username=${encodedUsername}`;
       const socket = new WebSocket(wsUrl);
       socketRef.current = socket;
+
 
       socket.onopen = () => {
         console.log('WebSocket connection established');
         setConnected(true);
         
         // Send join message with username
-        const joinMessage = {
-          type: 'JOIN',
-          username: username,
-          timestamp: new Date().toISOString()
-        };
-        socket.send(JSON.stringify(joinMessage));
+        // const joinMessage = {
+        //   type: 'JOIN',
+        //   username: username,
+        //   timestamp: new Date().toISOString()
+        // };
+        // socket.send(JSON.stringify(joinMessage));
         
         // Add system message
         setMessages(prev => [...prev, { 
@@ -63,11 +67,13 @@ function Chat({ roomData, username, setUsername }) {
       };
 
       socket.onmessage = (event) => {
+        console.log(event.data)
         const message = JSON.parse(event.data);
         
         if (message.type === 'USER_LIST') {
           setParticipants(message.users);
         } else if (message.type === 'USER_JOINED') {
+          console.log("in here")
           setParticipants(prev => [...prev, message.username]);
           setMessages(prev => [...prev, { 
             text: `${message.username} joined the chat`, 
@@ -89,11 +95,11 @@ function Chat({ roomData, username, setUsername }) {
         }
       };
 
-      socket.onclose = () => {
-        console.log('WebSocket connection closed');
-        setConnected(false);
-        setMessages(prev => [...prev, { text: 'Disconnected from chat server', type: 'system' }]);
-      };
+      // socket.onclose = () => {
+      //   console.log('WebSocket connection closed');
+      //   setConnected(false);
+      //   setMessages(prev => [...prev, { text: 'Disconnected from chat server', type: 'system' }]);
+      // };
 
       socket.onerror = (error) => {
         console.error('WebSocket error:', error);

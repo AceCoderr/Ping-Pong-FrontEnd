@@ -8,14 +8,13 @@ function Dashboard({ setCurrentRoom, setUsername }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [newRoomName, setNewRoomName] = useState('');
-  const [createUsername, setCreateUsername] = useState('');
+  const [pinger, setCreateUsername] = useState('');
   const [joinUsername, setJoinUsername] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [username, setLoginUsername] = useState("");
   const [password, setPassword] = useState("");
-  
   const navigate = useNavigate();
 
   // Fetch available rooms
@@ -31,7 +30,7 @@ function Dashboard({ setCurrentRoom, setUsername }) {
       password
     }
     setLoginUsername('user')
-    setPassword('2e69cb6c-1605-48d6-abb7-2217bdf873b1')
+    setPassword('f656073c-447b-4c7e-9ea1-30520066a539')
     
     try {
       const response = await axios.get('http://localhost:8080/fetchRooms', {
@@ -41,16 +40,18 @@ function Dashboard({ setCurrentRoom, setUsername }) {
       if (response.status !== 200) {
         throw new Error(`Server returned ${response.status}: ${response.statusText}`);
       }
-      
+      const data = response.data;
+
+      //console.log(response.data)
       // Transform the array of IDs into room objects
-      const roomIds = response.data;
-      const formattedRooms = roomIds.map(id => ({
+      const formattedRooms = Object.entries(data).map(([id,roomName])=>({
         id: id,
-        name: `Room ${id.substring(0, 6)}...`, // Create a shortened display name
+        name: roomName,
         participants: Math.floor(Math.random() * 10) + 1 // Random number for demo
       }));
-      
-      setRooms(formattedRooms);
+
+      setRooms(formattedRooms)
+      //console.log(rooms)
       
     } catch (err) {
       console.error('Error fetching rooms:', err);
@@ -70,20 +71,19 @@ function Dashboard({ setCurrentRoom, setUsername }) {
 
   const handleCreateRoom = async (e) => {
     e.preventDefault()
-    if (!newRoomName || !createUsername) return;
+    if (!newRoomName || !pinger) return;
     
     setLoading(true);
-    const loginData = {
-      username,
-      password
-    }
     setLoginUsername('user')
-    setPassword('2e69cb6c-1605-48d6-abb7-2217bdf873b1')
+    setPassword('67e5b7cc-a287-4e81-96c8-b975229c7a7b')
     try {
       //API call
-      const response = await axios.post('http://localhost:8080/create',loginData);
+      const response = await axios.post('http://localhost:8080/create',{roomName:newRoomName},{Headers:{
+        'Authorization':'Basic' + btoa('user:f656073c-447b-4c7e-9ea1-30520066a539')
+      }}
+      );
 
-      if (response.status !== 200) {
+      if (response.status !== 200) { 
         throw new Error(`Server returned ${response.status}: ${response.statusText}`);
       }
       console.log(response)
@@ -101,7 +101,7 @@ function Dashboard({ setCurrentRoom, setUsername }) {
       };
       
       setCurrentRoom(newRoom);
-      setUsername(createUsername);
+      setUsername(pinger);
       
     // check if roomId exists before navigating
   if (guid) {
@@ -124,7 +124,7 @@ function Dashboard({ setCurrentRoom, setUsername }) {
       };
       
       setCurrentRoom(dummyRoom);
-      setUsername(createUsername);
+      setUsername(pinger);
       navigate(`/chat/${dummyRoomId}`);
     } finally {
       setLoading(false);
@@ -207,7 +207,7 @@ function Dashboard({ setCurrentRoom, setUsername }) {
               <label>Your Name:</label>
               <input
                 type="text"
-                value={createUsername}
+                value={pinger}
                 onChange={(e) => setCreateUsername(e.target.value)}
                 placeholder="Enter your name"
               />
@@ -216,7 +216,7 @@ function Dashboard({ setCurrentRoom, setUsername }) {
               <button onClick={() => setShowCreateModal(false)}>Cancel</button>
               <button 
                 onClick={handleCreateRoom}
-                disabled={!newRoomName || !createUsername || loading}
+                disabled={!newRoomName || !pinger || loading}
               >
                 Create Room
               </button>
