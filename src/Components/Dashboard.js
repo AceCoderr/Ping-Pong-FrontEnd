@@ -14,6 +14,7 @@ function Dashboard({ setCurrentRoom, setUsername }) {
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const navigate = useNavigate();
+
   const backendAPI = process.env.REACT_APP_API_URL
   // Fetch available rooms
   useEffect(() => {
