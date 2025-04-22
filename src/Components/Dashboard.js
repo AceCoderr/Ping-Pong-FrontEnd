@@ -23,11 +23,13 @@ function Dashboard({ setCurrentRoom, setUsername }) {
   const fetchRooms = async () => {
     setLoading(true);
     setError(null);
-    
+    console.log(backendAPI)
     try {
-      const response = await axios.get(backendAPI+'/fetchRooms', {Headers:{
-        'Authorization':'Basic' + btoa('user:f656073c-447b-4c7e-9ea1-30520066a539')
-      }});
+      const response = await axios.get(backendAPI+'/fetchRooms');
+      // {Headers:{
+      //   'Authorization':'Basic' + btoa('user:f656073c-447b-4c7e-9ea1-30520066a539')
+      // }}
+      console.log(response.data)
       
       if (response.status !== 200) {
         throw new Error(`Server returned ${response.status}: ${response.statusText}`);
@@ -64,11 +66,10 @@ function Dashboard({ setCurrentRoom, setUsername }) {
     setLoading(true);
     try {
       //API call
-      const response = await axios.post(backendAPI+'/create',{roomName:newRoomName},{Headers:{
-        'Authorization':'Basic' + btoa('user:f656073c-447b-4c7e-9ea1-30520066a539')
-      }}
-      );
-
+      const response = await axios.post(backendAPI+'/create',{roomName:newRoomName});
+      // ,{Headers:{
+      //   'Authorization':'Basic' + btoa('user:f656073c-447b-4c7e-9ea1-30520066a539')
+      // }}
       if (response.status !== 200) { 
         throw new Error(`Server returned ${response.status}: ${response.statusText}`);
       }
