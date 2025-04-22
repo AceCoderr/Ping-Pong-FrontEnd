@@ -13,10 +13,8 @@ function Dashboard({ setCurrentRoom, setUsername }) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
-  const [username, setLoginUsername] = useState("");
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
+  const backendAPI = process.env.REACT_APP_API_URL
   // Fetch available rooms
   useEffect(() => {
     fetchRooms();
@@ -25,33 +23,24 @@ function Dashboard({ setCurrentRoom, setUsername }) {
   const fetchRooms = async () => {
     setLoading(true);
     setError(null);
-    const loginData = {
-      username,
-      password
-    }
-    setLoginUsername('user')
-    setPassword('f656073c-447b-4c7e-9ea1-30520066a539')
     
     try {
-      const response = await axios.get('http://localhost:8080/fetchRooms', {
-        params: loginData
-      });
+      const response = await axios.get(backendAPI+'/fetchRooms', {Headers:{
+        'Authorization':'Basic' + btoa('user:f656073c-447b-4c7e-9ea1-30520066a539')
+      }});
       
       if (response.status !== 200) {
         throw new Error(`Server returned ${response.status}: ${response.statusText}`);
       }
       const data = response.data;
 
-      //console.log(response.data)
       // Transform the array of IDs into room objects
       const formattedRooms = Object.entries(data).map(([id,roomName])=>({
         id: id,
         name: roomName,
         participants: Math.floor(Math.random() * 10) + 1 // Random number for demo
       }));
-
       setRooms(formattedRooms)
-      //console.log(rooms)
       
     } catch (err) {
       console.error('Error fetching rooms:', err);
@@ -72,13 +61,10 @@ function Dashboard({ setCurrentRoom, setUsername }) {
   const handleCreateRoom = async (e) => {
     e.preventDefault()
     if (!newRoomName || !pinger) return;
-    
     setLoading(true);
-    setLoginUsername('user')
-    setPassword('67e5b7cc-a287-4e81-96c8-b975229c7a7b')
     try {
       //API call
-      const response = await axios.post('http://localhost:8080/create',{roomName:newRoomName},{Headers:{
+      const response = await axios.post(backendAPI+'/create',{roomName:newRoomName},{Headers:{
         'Authorization':'Basic' + btoa('user:f656073c-447b-4c7e-9ea1-30520066a539')
       }}
       );

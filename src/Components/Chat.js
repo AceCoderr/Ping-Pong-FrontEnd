@@ -13,7 +13,8 @@ function Chat({ roomData, username, setUsername }) {
   const [showNamePrompt, setShowNamePrompt] = useState(!username);
   const [tempUsername, setTempUsername] = useState('');
   const [error, setError] = useState(null);
-  
+
+  const websocketURL = process.env.REACT_APP_WEBSOCKET_API_URL
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
 
@@ -42,7 +43,7 @@ function Chat({ roomData, username, setUsername }) {
     try {
       const encodedUsername = encodeURIComponent(username);
 
-      const wsUrl = `ws://localhost:8080/ws/chat/roomId=${roomId}?username=${encodedUsername}`;
+      const wsUrl = websocketURL + `/roomId=${roomId}?username=${encodedUsername}`;
       const socket = new WebSocket(wsUrl);
       socketRef.current = socket;
 
