@@ -136,24 +136,24 @@ function Dashboard({ setCurrentRoom, setUsername }) {
 
   return (
     <div className="room-listing-page">
-      <header>
-        <h1>Chat Rooms</h1>
+      <header className='header'>
+        <h1>Welcome to Ping-Pong!!</h1>
         <button 
           className="create-room-btn"
           onClick={() => setShowCreateModal(true)}
           disabled={loading}
         >
-          Create New Room
+          Create a Zone
         </button>
       </header>
 
       {error && <div className="error-message">{error}</div>}
 
       {loading ? (
-        <div className="loading">Loading rooms...</div>
+        <div className="loading">Loading zones...</div>
       ) : (
         <div className="rooms-list">
-          <h2>Available Rooms</h2>
+          <h2 className='header'>Available Zones</h2>
           {rooms && rooms.length > 0 ? (
             <ul className="room-list">
               {rooms.map(room => (
@@ -166,13 +166,13 @@ function Dashboard({ setCurrentRoom, setUsername }) {
                     className="join-btn"
                     onClick={() => openJoinModal(room)}
                   >
-                    Join Room
+                    Join a table
                   </button>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="no-rooms">No rooms available. Create one!</p>
+            <p className="no-rooms">No Zones available. Create one!</p>
           )}
         </div>
       )}
@@ -181,9 +181,9 @@ function Dashboard({ setCurrentRoom, setUsername }) {
       {showCreateModal && (
         <div className="modal-overlay">
           <div className="modal">
-            <h2>Create New Room</h2>
+            <h2>Create New Zone</h2>
             <div className="form-group">
-              <label>Room Name:</label>
+              <label>Zone Name:</label>
               <input
                 type="text"
                 value={newRoomName}
@@ -206,7 +206,7 @@ function Dashboard({ setCurrentRoom, setUsername }) {
                 onClick={handleCreateRoom}
                 disabled={!newRoomName || !pinger || loading}
               >
-                Create Room
+                Create Zone
               </button>
             </div>
           </div>
@@ -233,7 +233,7 @@ function Dashboard({ setCurrentRoom, setUsername }) {
                 onClick={handleJoinRoom}
                 disabled={!joinUsername}
               >
-                Join Chat
+                Join this table
               </button>
             </div>
           </div>
